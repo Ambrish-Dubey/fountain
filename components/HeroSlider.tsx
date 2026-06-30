@@ -19,7 +19,7 @@ const slides = [
     // title: "Limited Edition Pens",
     subtitle: "Explore exclusive collections",
     // cta: "Explore",
-    image: "https://cdn.shopify.com/s/files/1/0582/0819/0643/files/Pilot-Iroshizuku-Ink-Bottle-Asa-Gao-_Navy-Blue_-50ml_400x400.jpg?v=1716377506"
+    image: "https://makoba.com/cdn/shop/files/Web_Banner_f385e531-cee5-402b-ad3a-85462f637071.jpg?v=1782204490"
   },
 ];
 
