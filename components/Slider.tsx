@@ -1,8 +1,19 @@
 "use client";
+
 import { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function Slider({ children }: { children: React.ReactNode }) {
+type SliderProps = {
+  children: React.ReactNode;
+  prevButtonClassName?: string;
+  nextButtonClassName?: string;
+};
+
+export default function Slider({
+  children,
+  prevButtonClassName,
+  nextButtonClassName,
+}: SliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -13,22 +24,28 @@ export default function Slider({ children }: { children: React.ReactNode }) {
   const updateState = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+
     setCanScrollLeft(el.scrollLeft > 4);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
 
-    // Rough "page" indicator: how far through the scrollable width we are
     const maxScroll = el.scrollWidth - el.clientWidth;
     const progress = maxScroll > 0 ? el.scrollLeft / maxScroll : 0;
     const dotCount = Math.max(1, Math.ceil(childCount / 4));
-    setActiveDot(Math.min(dotCount - 1, Math.round(progress * (dotCount - 1))));
+
+    setActiveDot(
+      Math.min(dotCount - 1, Math.round(progress * (dotCount - 1)))
+    );
   }, [childCount]);
 
   useEffect(() => {
     updateState();
+
     const el = trackRef.current;
     if (!el) return;
+
     el.addEventListener("scroll", updateState, { passive: true });
     window.addEventListener("resize", updateState);
+
     return () => {
       el.removeEventListener("scroll", updateState);
       window.removeEventListener("resize", updateState);
@@ -46,7 +63,10 @@ export default function Slider({ children }: { children: React.ReactNode }) {
     const gap = parseFloat(styles.columnGap || styles.gap || "0");
     const cardWidth = firstCard.getBoundingClientRect().width + gap;
 
-    el.scrollBy({ left: dir * cardWidth, behavior: "smooth" });
+    el.scrollBy({
+      left: dir * cardWidth,
+      behavior: "smooth",
+    });
   };
 
   const dotCount = Math.max(1, Math.ceil(childCount / 4));
@@ -57,7 +77,10 @@ export default function Slider({ children }: { children: React.ReactNode }) {
         <button
           onClick={() => scroll(-1)}
           aria-label="Scroll left"
-          className="hidden md:flex absolute -left-6 top-[40%] -translate-y-1/2 z-10 items-center justify-center text-neutral-700 hover:text-neutral-900 transition-colors"
+          className={
+            prevButtonClassName ??
+            "hidden md:flex absolute -left-6 top-[40%] -translate-y-1/2 z-10 items-center justify-center text-neutral-700 hover:text-neutral-900 transition-colors"
+          }
         >
           <ChevronLeft size={28} strokeWidth={1.5} />
         </button>
@@ -74,7 +97,10 @@ export default function Slider({ children }: { children: React.ReactNode }) {
         <button
           onClick={() => scroll(1)}
           aria-label="Scroll right"
-          className="hidden md:flex absolute -right-6 top-[40%] -translate-y-1/2 z-10 items-center justify-center text-neutral-700 hover:text-neutral-900 transition-colors"
+          className={
+            nextButtonClassName ??
+            "hidden md:flex absolute -right-6 top-[40%] -translate-y-1/2 z-10 items-center justify-center text-neutral-700 hover:text-neutral-900 transition-colors"
+          }
         >
           <ChevronRight size={28} strokeWidth={1.5} />
         </button>
@@ -86,7 +112,9 @@ export default function Slider({ children }: { children: React.ReactNode }) {
             <span
               key={i}
               className={`h-1.5 rounded-full transition-all duration-200 ${
-                i === activeDot ? "w-5 bg-neutral-800" : "w-1.5 bg-neutral-300"
+                i === activeDot
+                  ? "w-5 bg-neutral-800"
+                  : "w-1.5 bg-neutral-300"
               }`}
             />
           ))}
